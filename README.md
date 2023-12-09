@@ -74,46 +74,115 @@ File SQL khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa
 #### 2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
 
 
-#### 3. Nhận diện khuôn mặt bằng face-recognition
+#### 3. Xây dựng thuật toán
 
-Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition) sủ dụng model Harcascade frontface của OpenCV
+a. Quét QR và chụp ảnh khuôn mặt
+
+> Để xuất frame ảnh ra màn hình một cách liên tục và đồng thời chạy các công việc khác mà không bị gián đoạn, project sử dụng `multiprocessing` trong Python. Thư viện hỗ trợ chạy nhiều process cùng lúc và song song với nhau. Trong bài toán này, project sử dụng 3 process chính như sau :
+
+![3process](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/3process.png?raw=true)
+
+`Process 1`: Xuất frame ảnh ra màn hình và chụp ảnh khuôn mặt.
+
+- Sau khi lấy frame ảnh từ camera thì sẽ xác định vị trí khuôn mặt có trong ảnh bằng cách sử dụng haarcascade. Sau đó, vẽ ô vuông màu xanh lá quanh khuôn mặt nhờ vào vị trí vừa xác định.
+- Xuất ảnh ra màn hình
+- Nếu nhận được giá trị từ process 2 thì sẽ chụp ảnh khuôn mặt có trong ảnh.
+
+
+`Process 2`: Quét QR và kiểm tra khuôn mặt có nhìn vào camera hay không
+
+- Đầu tiên quét mã QR, sau đó sẽ gửi tín hiệu cho process 3
+- Tạo biến count để đếm số lần khách hàng nhìn vào camera.
+- Nếu khách hàng nhìn vào camera thì count sẽ tăng lên 1, ngược lại khi khách hàng không nhìn vào camera thì count sẽ bằng 0.
+- Nếu khách hàng nhìn vào camera 5 lần thì sẽ gửi tín hiệu cho process 1 để chụp ảnh khuôn mặt
+
+
+`Process 3`: Dùng để voice thông báo
+- Process 3 sẽ đợi tín hiệu của process 2
+- Sau khi nhận tín hiệu của process 2 thì process 3 sẽ thực hiện voice “Kính chào “giới tính” + “tên” ”
+
+b. Xác minh khuôn mặt
+
+![facedetect](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/facedetect.png?raw=true)
+
+- Đầu tiên kết nối MQTT với chuỗi subscription giống với ESP32 để nhận giá trị từ ESP32. Nếu: 
+
 ```python
-detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml") 
+def on_message(client, userdata, msg):
+    if(msg.payload.decode("utf-8") == "0"):
+        if flag == 1:
+            engine.say("Xin vui lòng quét QR")
+            engine.runAndWait()
 ```
+-
+    - Giá trị là `1`: __không có người đi qua__. 
+    - Giá trị là `0`: __có người đi qua__. 
+    - Giá trị là `0` và biến `flag = 0`: có người đi qua nhưng người đó đã quét mã QR. 
+    - Giá trị là `0` và biến `flag = 1`: có người đi qua nhưng người đó chưa quét mã QR --> lập tức hệ thống sẽ cảnh báo.
+- Sau đó encode tất cả các ảnh trong folder và lưu vào một mảng `ListEncode`.
+- Mở camera và bắt đầu vòng lặp While.
+- Nếu số lượng ảnh trong folder lúc sau lớn hơn số lượng lúc đầu có nghĩa là ảnh mới vừa được thêm vào folder. Sau đó sẽ encode ảnh mới và lưu encode đó vào `ListEncode`.
+- Encode khuôn mặt có trong frame ảnh gọi là `EncodeFrame`.
 
-Sử dụng thêm model 68 điểm khuôn mặt
 ```python
-predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-``` 
-để xác nhận khuôn mặt có nhìn vào camera hay không 
-```python
-while check.value == 1:
-    if not queue.empty():
-        frame = queue.get()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
-            minNeighbors=5, minSize=(30, 30),
-            flags=cv2.CASCADE_SCALE_IMAGE)
+while True:
+    success, img = cap.read()
+    imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
+    imgS = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        if len(rects) == 0:
-            flag.value = 0
-            count.value = 0
+    after = os.listdir(path)
+    len2 = len(after)
+    if len2 > len1:
+        # Find the new image by comparing the lists
+        new_image = set(after) - set(before)
+        # Get the full path of the new image
+        if new_image:
+            new_image_path = os.path.join(path, new_image.pop())
+            img_new = cv2.imread(new_image_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            file_name, _ = os.path.splitext(os.path.basename(new_image_path))
+            classnames.append(file_name)
+            encode = face_recognition.face_encodings(img)[0]
+            encodeList.append(encode)
+            print(classnames)
+            print(len(encodeList))
         else:
-            for (x, y, w, h) in rects:
-                rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
-                shape = predictor(gray, rect)
-                shape = face_utils.shape_to_np(shape)
-                
-                if (len(shape[36:48]) >= 6) and (len(shape[48:68]) >= 20):
-                    flag.value = 1
-                    count.value += 1
-                else:
-                    flag.value = 0
-                    count.value = 0
-        print(count.value)
-        # Send the processed frame to the main process for display
-        queue.put(frame)
+            print("No new image added to the folder.")
+        len1 = len2
+    faceLocFrame = face_recognition.face_locations(imgS)
+    encodeFrame = face_recognition.face_encodings(imgS, faceLocFrame)
 ```
+
+- So sánh `EncodeFrame` với các giá trị encode có trong mảng `ListEncode` và lưu kết quả vào biến `matchIndex`.
+```python
+for encodeFace, faceLoc in zip(encodeFrame, faceLocFrame):
+        matches = face_recognition.compare_faces(encodeList, encodeFace)
+        faceDis = face_recognition.face_distance(encodeList, encodeFace)
+        matchIndex = np.argmin(faceDis)
+        if matches[matchIndex]:
+            name = classnames[matchIndex].upper()
+            print(name)
+            mydb = data.connect_database()
+            mycursor = mydb.cursor()
+            mycursor.execute("SELECT Ten FROM yourtablename WHERE QRID = %s", (name,))
+            available = mycursor.fetchall()
+            var = list(available[0])
+            print(var[0])
+            flag = 0
+        else:
+            flag = 1
+            print("Khong co trong danh sach")
+```
+- Nếu:
+    - `matchIndex` khác rỗng thì xuất tên và `flag = 0`.
+    - `matchIndex` bằng rỗng thì `flag = 1`.
+
+c. Phát hiện có vật cản đi qua
+
+ESP32 kết nối wifi và MQTT với chuỗi subscription giống với Raspberry Pi. Nếu có người đi qua ESP32 sẽ gửi tín hiệu là `0`, ngược lại ESP32 sẽ gửi tín hiệu là `1`.
+
+> [!IMPORTANT]
+> ESP32 chỉ có thể sử dụng Wifi băng tần 2.4Ghz
 
 #### 4. Đọc mã QR từ cảm biến sử dụng thư viện serial
 ```python
@@ -136,7 +205,10 @@ ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)  # Thiết lập timeout �
                     string_var[:] = [barcode_data]
 ```
 
-#### 5. 
+> [!NOTE]
+> Dùng lệnh `dmesg | grep tty` để lấy chính xác tên cổng Serial trên Raspberry Pi 4. ![serialport](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/serialport.png?raw=true)
+
+
 
 ## 4. Demo
 [Link Demo](https://youtube.com/)
