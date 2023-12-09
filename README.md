@@ -41,6 +41,10 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 - Đầu tiên, camera ở cổng `In` sẽ kiểm tra khuôn mặt có tồn tại trong hệ thống không, nếu khuôn mặt không tồn tại trong hệ thống khi đi qua cảm biến hồng ngoại sẽ phát thông báo `Vui lòng quét QR`. Nếu như đã tồn tại thì cho phép đi vào.
 - Tiếp theo, quét mã QR, nếu mã QR không tồn tại trong hệ thống. Hệ thống sẽ thông báo `QR không tồn tại`. Ngược lại, hệ thống sẽ yêu cầu khách hàng chụp ảnh khuôn mặt và lưu vào database.
 
+### Sơ đồ kết nối ngoại vi
+![Hardware](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/hardware.png?raw=true)
+
+
 ### Cấu trúc cơ sở dữ liệu
 |ID|QRID|Tên|Giới tính|Facepath|TimeIn|
 |---|---|---|---|---|---|
@@ -56,9 +60,6 @@ Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition)
 3. Đọc mã QR và chụp ảnh vào lần đầu: [test_database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/test_database.py)
 4. Nhận diện gương mặt: [face_detection](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/face_detection.py)
 
-### Sơ đồ kết nối ngoại vi
-
-![Hardware](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/hardware.png?raw=true)
 
 ## 4. Demo
 [Link Demo](https://youtube.com/)
