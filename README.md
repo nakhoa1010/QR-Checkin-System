@@ -114,12 +114,20 @@ ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)  # Thiết lập timeout �
                     string_var[:] = [barcode_data]
 ```
 
+#### 5. 
+
 ## 4. Demo
 [Link Demo](https://youtube.com/)
 ## 5. Kết quả đạt được
 
+### Ưu điểm
+- Hệ thống hoạt động đúng mục tiêu
+
+### Nhược điểm
+- Tốc độ thực thi chưa nhanh
+
 ## 6. Hướng phát triển tiếp theo
 - [ ] Làm giao diện UI/UX
 
-## 7. Material 
+
 
