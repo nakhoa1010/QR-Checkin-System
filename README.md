@@ -5,7 +5,7 @@
 
 Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụng Mã QR kết hợp xác minh bằng khuôn mặt
 
-### Mục Tiêu:
+### Mục tiêu:
 
 - Tạo hệ thống tạo sự kiện.
 - Tạo mã QR cho mỗi cá nhân tham gia sự kiện.
@@ -13,6 +13,7 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 - Kết hợp xác minh bằng khuôn mặt.
 
 ## 2. Hardware & Software
+
 ### Hardware 
 |Tên phần cứng|Số Lượng|Mục đích|
 |:---:|:---:|:---:|
@@ -25,13 +26,14 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 
 ### Software 
 - **Ngôn ngữ sử dụng**: `Python` (cho Raspberry Pi 4) & `Arduino` (cho ESP32)
-- Các thư viện Python chính sử dụng trong Project: 
+- Các thư viện Python chính được sử dụng trong Project: 
 1. [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
 2. [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): phục vụ xác minh gương mặt
 3. [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
 4. [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
 
 ## 3. Triển khai
+
 ### Flowchart
 
 ![Flowchart](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/flowchart.png?raw=true)
@@ -44,7 +46,7 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 |---|---|---|---|---|---|
 |Số thứ tự|Mã QR của cá nhân tham dự sự kiện|Tên người tham dự|Giới tính|Đường dẫn đến nơi lưu trữ khuôn mặt|Thời gian thực hiện Check In|
 |1|EventA-abc123xyz|Nguyễn Anh Khoa|Nam|facepath/EventA-abc123xyz|2023-11-07 11:06:37|
-### Nhận Diện khuôn mặt bằng OpenCV và dlib
+### Nhận diện khuôn mặt bằng OpenCV và dlib
 
 Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition)
 
@@ -53,6 +55,10 @@ Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition)
 2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
 3. Đọc mã QR và chụp ảnh vào lần đầu: [test_database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/test_database.py)
 4. Nhận diện gương mặt: [face_detection](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/face_detection.py)
+
+### Sơ đồ kết nối ngoại vi
+
+![Hardware](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/hardware.png?raw=true)
 
 ## 4. Demo
 [Link Demo](https://youtube.com/)
