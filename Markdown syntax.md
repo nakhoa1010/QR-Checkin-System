@@ -1,5 +1,6 @@
 |This|is|a|table|
 |---|---|---|---|
+|a|b|C|d|
 
 ---
 >This is a comment
@@ -16,13 +17,16 @@ import somthing as sth
 ~~Oh~~ **common** _dear_
 
 ---
-Only ==22== people
+Only `22` people
 
 ---
 1. First
 2. Second
-a. _The second first_
-b. The second second
+
+    a. _The second first_
+
+    b. The second second
+
 3. Third
 
 ---
@@ -31,7 +35,7 @@ b. The second second
 
 ---
 Definition
-: X^2^ + H~2~O
+: X<sup>2</sup> + H<sub>2</sub>O
 
 ---
 ```mermaid
