@@ -51,8 +51,15 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 - Tiếp theo, quét mã QR, nếu mã QR không tồn tại trong hệ thống. Hệ thống sẽ thông báo `QR không tồn tại`. Ngược lại, hệ thống sẽ yêu cầu khách hàng chụp ảnh khuôn mặt và lưu vào database.
 
 ### Sơ đồ kết nối ngoại vi
+
+Tổng quan
+
 ![Hardware](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/hardware.png?raw=true)
 
+
+Sơ đồ kết nối các thành phần
+
+![sodothanhphan](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/sodoketnoi.png?raw=true)
 
 ### Các thành phần chính
 
