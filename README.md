@@ -27,16 +27,18 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 ### Software 
 - **Ngôn ngữ sử dụng**: `Python` (cho Raspberry Pi 4) & `Arduino` (cho ESP32)
 - Các thư viện Python chính được sử dụng trong Project:
-- Project được chia thành 2 bài toán chính là:
-1. Quét mã QR và chụp ảnh khuôn mặt
+- Project được chia thành 3 bài toán chính là:
+1. Quét mã QR và chụp ảnh khuôn mặt (python)
 - [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
 - [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
 - Multiprocessing: Chạy nhiều tiến trình song song
-2. Xác minh khuôn mặt
+2. Xác minh khuôn mặt (python)
 - [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
 - [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): thư viện hỗ trợ cho face-recognition
 - [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
-- MQTT: Giao thức kết nối ESP32 với Raspberry Pi
+- MQTT: Giao thức kết nối ESP32 với Raspberry Pi, ở đây sử dụng để gửi messenge
+3. Cảm biến hồng ngoại (Arduino)
+- MQTT: Giao thức kết nối ESP32 với Raspberry Pi, ở đây sử dụng để nhận messenge
 
 
 ## 3. Triển khai
