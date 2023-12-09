@@ -84,6 +84,8 @@ a. Quét QR và chụp ảnh khuôn mặt
 
 `Process 1`: Xuất frame ảnh ra màn hình và chụp ảnh khuôn mặt.
 
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L15-L40
+
 - Sau khi lấy frame ảnh từ camera thì sẽ xác định vị trí khuôn mặt có trong ảnh bằng cách sử dụng haarcascade. Sau đó, vẽ ô vuông màu xanh lá quanh khuôn mặt nhờ vào vị trí vừa xác định.
 - Xuất ảnh ra màn hình
 - Nếu nhận được giá trị từ process 2 thì sẽ chụp ảnh khuôn mặt có trong ảnh.
@@ -91,13 +93,20 @@ a. Quét QR và chụp ảnh khuôn mặt
 
 `Process 2`: Quét QR và kiểm tra khuôn mặt có nhìn vào camera hay không
 
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L42-L88
+
 - Đầu tiên quét mã QR, sau đó sẽ gửi tín hiệu cho process 3
 - Tạo biến count để đếm số lần khách hàng nhìn vào camera.
 - Nếu khách hàng nhìn vào camera thì count sẽ tăng lên 1, ngược lại khi khách hàng không nhìn vào camera thì count sẽ bằng 0.
 - Nếu khách hàng nhìn vào camera 5 lần thì sẽ gửi tín hiệu cho process 1 để chụp ảnh khuôn mặt
 
+> [!NOTE]
+> Dùng lệnh `dmesg | grep tty` để lấy chính xác tên cổng Serial trên Raspberry Pi 4. ![serialport](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/serialport.png?raw=true)
 
 `Process 3`: Dùng để voice thông báo
+
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L90-L94
+
 - Process 3 sẽ đợi tín hiệu của process 2
 - Sau khi nhận tín hiệu của process 2 thì process 3 sẽ thực hiện voice “Kính chào “giới tính” + “tên” ”
 
@@ -132,14 +141,9 @@ ESP32 kết nối wifi và MQTT với chuỗi subscription giống với Raspber
 > [!IMPORTANT]
 > ESP32 chỉ có thể sử dụng Wifi băng tần 2.4Ghz
 
-#### 4. Đọc mã QR từ cảm biến sử dụng thư viện serial
 
-https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L6
 
-https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L45-L56
 
-> [!NOTE]
-> Dùng lệnh `dmesg | grep tty` để lấy chính xác tên cổng Serial trên Raspberry Pi 4. ![serialport](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/serialport.png?raw=true)
 
 
 
