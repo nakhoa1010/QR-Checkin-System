@@ -15,7 +15,7 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 ## 2. Hardware & Software
 ### Hardware 
 |Tên phần cứng|Số Lượng|Mục đích|
-|---|:---:|---|
+|:---:|:---:|:---:|
 |Raspberry Pi 4|2|Nhân xử lý chính của hệ thống.|
 |Màn hình 7 inch HDMI|1|Màn hình hiển thị cho Raspberry Pi 4|
 |Module đọc mã QR|1|Đọc mã QR.|
@@ -28,7 +28,8 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 - Các thư viện Python chính sử dụng trong Project: 
 1. [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
 2. [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): phục vụ xác minh gương mặt
-3. [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
+3. [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
+4. [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
 
 ## 3. Triển khai
 ### Flowchart
@@ -42,14 +43,23 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 |ID|QRID|Tên|Giới tính|Facepath|TimeIn|
 |---|---|---|---|---|---|
 |Số thứ tự|Mã QR của cá nhân tham dự sự kiện|Tên người tham dự|Giới tính|Đường dẫn đến nơi lưu trữ khuôn mặt|Thời gian thực hiện Check In|
+|1|EventA-abc123xyz|Nguyễn Anh Khoa|Nam|facepath/EventA-abc123xyz|2023-11-07 11:06:37|
 ### Nhận Diện khuôn mặt bằng OpenCV và dlib
 
-### Kết nối các thành phần
-- Khởi tạo cơ sở dữ liệu: [Database](/QR-Checkin-System/main/yourtablename.sql)
-- 
+Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition)
+
+### Các thành phần 
+1. Khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/yourtablename.sql)
+2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
+3. Đọc mã QR và chụp ảnh vào lần đầu: [test_database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/test_database.py)
+4. Nhận diện gương mặt: [face_detection](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/face_detection.py)
 
 ## 4. Demo
-## 5. Ket qua dat duoc
-## 6. Uu, nhuoc & huong phat trien
+[Link Demo](https://youtube.com/)
+## 5. Kết quả đạt được
+
+## 6. Hướng phát triển tiếp theo
+- [ ] Làm giao diện UI/UX
+
 ## 7. Material 
 
