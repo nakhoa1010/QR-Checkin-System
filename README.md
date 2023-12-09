@@ -18,19 +18,28 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 |Tên phần cứng|Số Lượng|Mục đích|
 |:---:|:---:|:---:|
 |Raspberry Pi 4|2|Nhân xử lý chính của hệ thống.|
-|Màn hình 7 inch HDMI|1|Màn hình hiển thị cho Raspberry Pi 4|
-|Module đọc mã QR|1|Đọc mã QR.|
-|Camera Raspberry Pi 4 V2|2|Phục vụ xác minh bằng khuôn mặt.|
-|Cảm biến hồng ngoại|1|Kiểm tra người ra vào.|
-|ESP32|1|Đọc tín hiệu từ cảm biến hồng ngoại.|
+|[Màn hình 7 inch HDMI](https://shopee.vn/M%C3%A0n-h%C3%ACnh-7-inch-IPS-HDMI-1024X600-i.29514670.16478114938)|1|Màn hình hiển thị cho Raspberry Pi 4|
+|[Module đọc mã QR](https://hshop.vn/products/mach-gm65-1d-2d-qr-barcode-reader-scanner-module)|1|Đọc mã QR.|
+|[Camera Raspberry Pi 4 V2](https://hshop.vn/products/camera-raspberry-pi-v2-8mp)|2|Phục vụ xác minh bằng khuôn mặt.|
+|[Cảm biến hồng ngoại](https://hshop.vn/products/cam-bien-vat-can-hong-ngoai-e3f-ds100c4-adjustable-ir-infrared-proximity-sensor)|1|Kiểm tra người ra vào.|
+|[ESP32](https://icdayroi.com/kit-rf-thu-phat-wifi-ble-esp32-wroom-32u-devkitc)|1|Đọc tín hiệu từ cảm biến hồng ngoại.|
 
 ### Software 
 - **Ngôn ngữ sử dụng**: `Python` (cho Raspberry Pi 4) & `Arduino` (cho ESP32)
-- Các thư viện Python chính được sử dụng trong Project: 
-1. [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
-2. [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
-3. [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): thư viện hỗ trợ cho face-recognition
-4. [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
+- Các thư viện Python chính được sử dụng trong Project:
+- Project được chia thành 3 bài toán chính là:
+1. Quét mã QR và chụp ảnh khuôn mặt (python)
+- [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
+- [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
+- Multiprocessing: Chạy nhiều tiến trình song song
+2. Xác minh khuôn mặt (python)
+- [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
+- [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): thư viện hỗ trợ cho face-recognition
+- [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
+- MQTT: Giao thức kết nối ESP32 với Raspberry Pi, ở đây sử dụng để gửi messenge
+3. Cảm biến hồng ngoại (Arduino)
+- MQTT: Giao thức kết nối ESP32 với Raspberry Pi, ở đây sử dụng để nhận messenge
+
 
 ## 3. Triển khai
 
