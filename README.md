@@ -87,26 +87,32 @@ predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 ``` 
 để xác nhận khuôn mặt có nhìn vào camera hay không 
 ```python
-while True:
-        ret, frame = cap.read()  # Capture frame-by-frame
+while check.value == 1:
+    if not queue.empty():
+        frame = queue.get()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
             minNeighbors=5, minSize=(30, 30),
             flags=cv2.CASCADE_SCALE_IMAGE)
 
         if len(rects) == 0:
-            playsound('nhin.mp3')
+            flag.value = 0
+            count.value = 0
         else:
             for (x, y, w, h) in rects:
                 rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
-                
                 shape = predictor(gray, rect)
                 shape = face_utils.shape_to_np(shape)
                 
-                if (len(shape[36:48]) >= 6) & (len(shape[48:68]) >= 20):  # Số lượng điểm đánh dấu mắt ít nhất là 6
-                    check = 1
+                if (len(shape[36:48]) >= 6) and (len(shape[48:68]) >= 20):
+                    flag.value = 1
+                    count.value += 1
                 else:
-                    playsound('nhin.mp3')
+                    flag.value = 0
+                    count.value = 0
+        print(count.value)
+        # Send the processed frame to the main process for display
+        queue.put(frame)
 ```
 
 #### 4. Đọc mã QR từ cảm biến sử dụng thư viện serial
