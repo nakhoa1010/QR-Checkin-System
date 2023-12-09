@@ -71,7 +71,7 @@ Sơ đồ kết nối các thành phần
 
 File SQL khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/yourtablename.sql)
 
-#### 2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
+#### 2. Tạo mã QR: https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/QR_Generator.py#L1-L6
 
 
 #### 3. Xây dựng thuật toán
@@ -107,15 +107,8 @@ b. Xác minh khuôn mặt
 
 - Đầu tiên kết nối MQTT với chuỗi subscription giống với ESP32 để nhận giá trị từ ESP32. Nếu: 
 
-```python
-def on_message(client, userdata, msg):
-    if(msg.payload.decode("utf-8") == "0"):
-        if flag == 1:
-            engine.say("Xin vui lòng quét QR")
-            engine.runAndWait()
-```
--
-    - Giá trị là `1`: __không có người đi qua__. 
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/mqtt.py#L54-L58
+-   - Giá trị là `1`: __không có người đi qua__. 
     - Giá trị là `0`: __có người đi qua__. 
     - Giá trị là `0` và biến `flag = 0`: có người đi qua nhưng người đó đã quét mã QR. 
     - Giá trị là `0` và biến `flag = 1`: có người đi qua nhưng người đó chưa quét mã QR --> lập tức hệ thống sẽ cảnh báo.
@@ -124,55 +117,10 @@ def on_message(client, userdata, msg):
 - Nếu số lượng ảnh trong folder lúc sau lớn hơn số lượng lúc đầu có nghĩa là ảnh mới vừa được thêm vào folder. Sau đó sẽ encode ảnh mới và lưu encode đó vào `ListEncode`.
 - Encode khuôn mặt có trong frame ảnh gọi là `EncodeFrame`.
 
-```python
-while True:
-    success, img = cap.read()
-    imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
-    imgS = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    after = os.listdir(path)
-    len2 = len(after)
-    if len2 > len1:
-        # Find the new image by comparing the lists
-        new_image = set(after) - set(before)
-        # Get the full path of the new image
-        if new_image:
-            new_image_path = os.path.join(path, new_image.pop())
-            img_new = cv2.imread(new_image_path)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            file_name, _ = os.path.splitext(os.path.basename(new_image_path))
-            classnames.append(file_name)
-            encode = face_recognition.face_encodings(img)[0]
-            encodeList.append(encode)
-            print(classnames)
-            print(len(encodeList))
-        else:
-            print("No new image added to the folder.")
-        len1 = len2
-    faceLocFrame = face_recognition.face_locations(imgS)
-    encodeFrame = face_recognition.face_encodings(imgS, faceLocFrame)
-```
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/mqtt.py#L71-L96
 
 - So sánh `EncodeFrame` với các giá trị encode có trong mảng `ListEncode` và lưu kết quả vào biến `matchIndex`.
-```python
-for encodeFace, faceLoc in zip(encodeFrame, faceLocFrame):
-        matches = face_recognition.compare_faces(encodeList, encodeFace)
-        faceDis = face_recognition.face_distance(encodeList, encodeFace)
-        matchIndex = np.argmin(faceDis)
-        if matches[matchIndex]:
-            name = classnames[matchIndex].upper()
-            print(name)
-            mydb = data.connect_database()
-            mycursor = mydb.cursor()
-            mycursor.execute("SELECT Ten FROM yourtablename WHERE QRID = %s", (name,))
-            available = mycursor.fetchall()
-            var = list(available[0])
-            print(var[0])
-            flag = 0
-        else:
-            flag = 1
-            print("Khong co trong danh sach")
-```
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/mqtt.py#L98-L114
 - Nếu:
     - `matchIndex` khác rỗng thì xuất tên và `flag = 0`.
     - `matchIndex` bằng rỗng thì `flag = 1`.
@@ -185,25 +133,10 @@ ESP32 kết nối wifi và MQTT với chuỗi subscription giống với Raspber
 > ESP32 chỉ có thể sử dụng Wifi băng tần 2.4Ghz
 
 #### 4. Đọc mã QR từ cảm biến sử dụng thư viện serial
-```python
-import serial
-```
-```python 
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)  # Thiết lập timeout ở đây
-    try:
-        while True:
-            barcode_data = ser.readline().decode().strip()
-            if barcode_data:
-                print(f'Mã vạch đã đọc được: {barcode_data}')
-                check_var = gh.check_available(barcode_data)
-                if check_var == None:
-                    print("QR khong ton tai trong he thong.")
-                else:
-                    print("QR ton tai trong he thong.") 
-                    check.value = 1
-                    gh.check(barcode_data)
-                    string_var[:] = [barcode_data]
-```
+
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L6
+
+https://github.com/nakhoa1010/QR-Checkin-System/blob/bfb0dc49ac2cbeb5de50016332474ded3fcf7486/main/test_database.py#L45-L56
 
 > [!NOTE]
 > Dùng lệnh `dmesg | grep tty` để lấy chính xác tên cổng Serial trên Raspberry Pi 4. ![serialport](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/serialport.png?raw=true)
