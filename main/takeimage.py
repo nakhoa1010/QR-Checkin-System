@@ -6,7 +6,7 @@ import pyttsx3
 import os
 import shutil
 detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")  # Faster but less accurate
-predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 check = 0
 done = 0
@@ -61,5 +61,5 @@ def capture(image_name):
     cv2.destroyAllWindows()
     
     return save_path
-if __name__ == "__main__":
-    print('save to: ' + capture('ID001.jpg'))
+# if __name__ == "__main__":
+#     print('save to: ' + capture('ID001.jpg'))

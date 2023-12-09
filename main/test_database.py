@@ -20,25 +20,26 @@ def process1(queue, flag, count, check, string_var):
     
     while True:
         frame = picam2.capture_array()
-        # framecopy = frame.copy()
+        framecopy = frame.copy()
         if flag.value == 0:
             cv2.rectangle(frame, (0, 0), (200, 200), (0, 0, 255), 2)
         else:
             cv2.rectangle(frame, (0, 0), (200, 200), (0, 255, 0), 2)
         
         cv2.imshow("Frame", frame)
-        if count.value >= 20:
+        if count.value >= 5:
             save_path = "facepath/" + str(string_var[0]) + ".jpg"
-            cv2.imwrite(save_path, frame)
+            cv2.imwrite(save_path, framecopy)
             gh.update_data(str(string_var[0]), save_path)
             count.value = 0
             check.value = 0
+            flag.value == 0
         queue.put(frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
 
-def process2(queue, flag, count, check, string_var):
+def process2(queue, flag, count, check, string_var,voice):
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)  # Thiết lập timeout ở đây
     try:
         while True:
@@ -51,7 +52,7 @@ def process2(queue, flag, count, check, string_var):
                 else:
                     print("QR ton tai trong he thong.") 
                     check.value = 1
-                    gh.check(barcode_data)
+                    voice.value = 1
                     string_var[:] = [barcode_data]
             while check.value == 1:
                 if not queue.empty():
@@ -77,27 +78,52 @@ def process2(queue, flag, count, check, string_var):
                                 flag.value = 0
                                 count.value = 0
                     print(count.value)
-
+                    # Send the processed frame to the main process for display
+                    queue.put(frame)
+                    
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord("q"):
                     break
     finally:
         ser.close()  # Close the serial connection when done
+        
+def process3(string_var, voice):
+    while True:
+        if voice.value == 1:
+            gh.check(str(string_var[0]))
+            voice.value = 0
+            
+def display_frames(queue):
+    while True:
+        if not queue.empty():
+            frame = queue.get()
+            
+
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
 if __name__ == "__main__":
     with Manager() as manager:
         flag = multiprocessing.Value('i', 0)  
         count = multiprocessing.Value('i', 0)
         check = multiprocessing.Value('i', 0)
+        voice = multiprocessing.Value('i', 0)
         string_var = manager.list([""])
         queue = multiprocessing.Queue()
 
         p1 = multiprocessing.Process(target=process1, args=(queue, flag, count, check, string_var))
-        p2 = multiprocessing.Process(target=process2, args=(queue, flag, count, check, string_var))
-
+        p2 = multiprocessing.Process(target=process2, args=(queue, flag, count, check, string_var,voice))
+        p3 = multiprocessing.Process(target=process3, args=(string_var,voice))
+        display_process = Process(target=display_frames, args=(queue,))
+        
         p1.start()
         p2.start()
-
+        p3.start()
+        display_process.start()
+        
         p1.join()
         p2.join()
+        p3.join()
+        display_process.join()
 
         print("Tiến trình đã kết thúc")

@@ -1,7 +1,7 @@
 import mysql.connector
 from datetime import datetime
 from gtts import gTTS
-import playsound
+from playsound import playsound
 
 def current_time():
   now = datetime.now()
@@ -51,9 +51,15 @@ def check(datain):
   timein = result[2]
   facepath = result[3]
   
+  line = "Kính chào" + sex + name
+  language = "vi"
+  say = gTTS(text = line, lang = language)
+  say.save("welcome.mp3")
   # engine.say("Kính chào " + return_sex(sex) + " " + name)
   # engine.say("Xin vui lòng nhìn vào màn hình")
   # engine.runAndWait()
+  playsound('welcome.mp3')
+  playsound('nhin.mp3')
   
   
 
