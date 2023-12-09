@@ -50,9 +50,40 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 |---|---|---|---|---|---|
 |Số thứ tự|Mã QR của cá nhân tham dự sự kiện|Tên người tham dự|Giới tính|Đường dẫn đến nơi lưu trữ khuôn mặt|Thời gian thực hiện Check In|
 |1|EventA-abc123xyz|Nguyễn Anh Khoa|Nam|facepath/EventA-abc123xyz|2023-11-07 11:06:37|
-### Nhận diện khuôn mặt bằng OpenCV và dlib
+### Nhận diện khuôn mặt bằng face-recognition
 
-Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition)
+Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition) sủ dụng model Harcascade frontface của OpenCV
+```python
+detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml") 
+```
+
+Sử dụng thêm model 68 điểm khuôn mặt
+```python
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+``` 
+để xác nhận khuôn mặt có nhìn vào camera hay không 
+```python
+while True:
+        ret, frame = cap.read()  # Capture frame-by-frame
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
+            minNeighbors=5, minSize=(30, 30),
+            flags=cv2.CASCADE_SCALE_IMAGE)
+
+        if len(rects) == 0:
+            playsound('nhin.mp3')
+        else:
+            for (x, y, w, h) in rects:
+                rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
+                
+                shape = predictor(gray, rect)
+                shape = face_utils.shape_to_np(shape)
+                
+                if (len(shape[36:48]) >= 6) & (len(shape[48:68]) >= 20):  # Số lượng điểm đánh dấu mắt ít nhất là 6
+                    check = 1
+                else:
+                    playsound('nhin.mp3')
+```
 
 ### Các thành phần 
 1. Khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/yourtablename.sql)
