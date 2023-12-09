@@ -28,8 +28,8 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 - **Ngôn ngữ sử dụng**: `Python` (cho Raspberry Pi 4) & `Arduino` (cho ESP32)
 - Các thư viện Python chính được sử dụng trong Project: 
 1. [**QR code**](https://pypi.org/project/qrcode/): tạo mã QRCode
-2. [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): phục vụ xác minh gương mặt
-3. [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
+2. [**face-recognition**](https://github.com/ageitgey/face_recognition): thuật toán nhận diện khuôn mặt
+3. [**OpenCV**](https://pypi.org/project/opencv-python/), [**dlib**](https://pypi.org/project/dlib/): thư viện hỗ trợ cho face-recognition
 4. [**MySQL Connector Python**](https://pypi.org/project/mysql-connector-python/): kết nối với Database
 
 ## 3. Triển khai
@@ -45,12 +45,20 @@ Thiết kế hệ thống điểm danh ra vào cho một sự kiện, sử dụn
 ![Hardware](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/pic/hardware.png?raw=true)
 
 
-### Cấu trúc cơ sở dữ liệu
-|ID|QRID|Tên|Giới tính|Facepath|TimeIn|
-|---|---|---|---|---|---|
-|Số thứ tự|Mã QR của cá nhân tham dự sự kiện|Tên người tham dự|Giới tính|Đường dẫn đến nơi lưu trữ khuôn mặt|Thời gian thực hiện Check In|
-|1|EventA-abc123xyz|Nguyễn Anh Khoa|Nam|facepath/EventA-abc123xyz|2023-11-07 11:06:37|
-### Nhận diện khuôn mặt bằng face-recognition
+### Các thành phần chính
+
+#### 1. Cấu trúc cơ sở dữ liệu
+|Tên dữ liệu|ID|QRID|Tên|Giới tính|Facepath|TimeIn|
+|---|---|---|---|---|---|---|
+|Giải thích|Số thứ tự|Mã QR của cá nhân tham dự sự kiện|Tên người tham dự|Giới tính|Đường dẫn đến nơi lưu trữ khuôn mặt|Thời gian thực hiện Check In|
+|Ví dụ|1|EventA-abc123xyz|Nguyễn Anh Khoa|Nam|facepath/EventA-abc123xyz|2023-11-07 11:06:37|
+
+File SQL khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/yourtablename.sql)
+
+#### 2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
+
+
+#### 3. Nhận diện khuôn mặt bằng face-recognition
 
 Dựa trên [face-recognition](https://github.com/ageitgey/face_recognition) sủ dụng model Harcascade frontface của OpenCV
 ```python
@@ -85,12 +93,26 @@ while True:
                     playsound('nhin.mp3')
 ```
 
-### Các thành phần 
-1. Khởi tạo cơ sở dữ liệu: [Database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/yourtablename.sql)
-2. Tạo mã QR: [QR_Generator](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/QR_Generator.py)
-3. Đọc mã QR và chụp ảnh vào lần đầu: [test_database](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/test_database.py)
-4. Nhận diện gương mặt: [face_detection](https://github.com/nakhoa1010/QR-Checkin-System/blob/main/main/face_detection.py)
-
+#### 4. Đọc mã QR từ cảm biến sử dụng thư viện serial
+```python
+import serial
+```
+```python 
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)  # Thiết lập timeout ở đây
+    try:
+        while True:
+            barcode_data = ser.readline().decode().strip()
+            if barcode_data:
+                print(f'Mã vạch đã đọc được: {barcode_data}')
+                check_var = gh.check_available(barcode_data)
+                if check_var == None:
+                    print("QR khong ton tai trong he thong.")
+                else:
+                    print("QR ton tai trong he thong.") 
+                    check.value = 1
+                    gh.check(barcode_data)
+                    string_var[:] = [barcode_data]
+```
 
 ## 4. Demo
 [Link Demo](https://youtube.com/)
