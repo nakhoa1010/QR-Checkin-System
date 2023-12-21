@@ -42,14 +42,12 @@ def check(datain):
   QRID = datain
   
   mycursor = mydb.cursor()
-  mycursor.execute("SELECT GioiTinh, Ten, TimeIn, FacePath FROM yourtablename WHERE QRID = %s",(QRID,))
+  mycursor.execute("SELECT GioiTinh, Ten FROM yourtablename WHERE QRID = %s",(QRID,))
   myresult = mycursor.fetchall()
   result = list(myresult[0])
   
   sex = result[0]  
   name = result[1]
-  timein = result[2]
-  facepath = result[3]
   
   line = "Kính chào" + sex + name
   language = "vi"
