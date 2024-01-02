@@ -159,6 +159,7 @@ ESP32 kết nối wifi và MQTT với chuỗi subscription giống với Raspber
 
 ## 6. Hướng phát triển tiếp theo
 - [ ] Làm giao diện UI/UX
+- [ ] Trang web đăng kí sự kiện
 
 
 
